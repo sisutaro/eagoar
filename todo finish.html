@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Todolist</title>
+    <link href="todofinish.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <h1>todo list</h1>
+    <great class="add-items">
+    <input id="words" type="text" placeholder="type your words"/>
+    <button type="button" id="newbtn" onclick="addElement(document.getElementById('words').value)">New</button>
+    </great>
+
+    <ul id="todo-wrap"></ul>
+    <button type="button" id="deleteall" onclick="deleteall()">deleteall</button>
+  </body>
+
+ 
+  <script>
+    let id = 1;
+  let general={
+               newtd:[]
+               //done: false,
+      }
+  
+  
+function init(){
+    recoverLocalStorage();
+    for(var i = 0; i < general.newtd.length ; i++){
+        addElement(general.newtd[i]);
+    }
+}
+function recoverLocalStorage() {
+  if (localStorage.list) {
+    var recoverTodo = JSON.parse(localStorage.getItem("list"));
+    general.newtd = recoverTodo;  
+  }
+}
+function LocalStorage(){
+    var ul = document.getElementById("todo-wrap").childNodes;
+    var list = [];
+    for(var i = 0; i < ul.length; i++){
+        list.push(ul[i].childNodes[1].nodeValue.trim());
+    }
+    console.log(list);
+    localStorage.clear();
+    localStorage.setItem("list",JSON.stringify(list));
+}
+
+  const addElement= function(word){
+      let ul    = document.getElementById("todo-wrap");
+      let words = word;
+      let child = document.createElement('li');
+      let input = document.getElementById('words');
+
+      child.setAttribute("id", id++);
+      child.innerHTML = `<input type="checkbox">
+                          ${words}
+                          <button type="button" onclick="editElement(this)">Edit</button>
+                          <button type="button" onclick="deleteElement(this)">Delete</button>`;
+      ul.appendChild(child);
+      input.value = "";
+    
+    };
+    
+function deleteall(){
+      let ul    = document.getElementById("todo-wrap");
+          ul.innerHTML = '';
+};
+
+const deleteElement = function(e){
+      e.parentNode.remove()
+}
+ 
+const editElement = function(e){
+      let ul = e.parentNode;
+
+      if(!ul.childNodes[0].checked) return;
+
+      let words = ul.childNodes[1].nodeValue.trim();
+          ul.innerHTML = `<input type="text" value=${words}>
+                          <button type="button" onclick="saveElement(this)">Save</button>
+                          <button type="button" onclick="deleteElement(this)">Delete</button>`;
+      
+    };
+ 
+const saveElement = function(e){
+      let ul    = e.parentNode;
+      let words = ul.childNodes[0].value;
+          ul.innerHTML = `<input type="checkbox">
+                         ${words}
+                         <button type="button" onclick="editElement(this)">Edit</button>
+                         <button type="button" onclick="deleteElement(this)">Delete</button>`;
+                    
+    }
+
+
+  init();
+window.onbeforeunload = LocalStorage;
+    
+  </script>
+</html>
